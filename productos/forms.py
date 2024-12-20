@@ -32,11 +32,13 @@ class FormularioProducto(forms.ModelForm):
     def clean_codigo(self):
         codigo = self.cleaned_data.get('codigo')
 
-        # Verifica si ya existe un producto con el mismo código
-        if Producto.objects.filter(codigo=codigo).exists():
+        # Verifica si ya existe un producto con el mismo código, excluyendo el actual
+        producto_id = self.instance.id if self.instance else None
+        if Producto.objects.filter(codigo=codigo).exclude(id=producto_id).exists():
             raise forms.ValidationError(
                 'Ya existe un producto con este código.')
         return codigo
+
 
 
 class FormularioCategoria(forms.ModelForm):
